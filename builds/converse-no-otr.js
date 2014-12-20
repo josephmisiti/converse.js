@@ -30140,7 +30140,7 @@ Strophe.Connection.prototype = {
         var cond, conflict;
         if (typ !== null && typ == "terminate") {
             // Don't process stanzas that come in after disconnect
-            if (this.disconnecting || !this.connected) {
+            if (this.disconnecting) {
                 return;
             }
 
@@ -32245,7 +32245,6 @@ Strophe.Websocket.prototype = {
             this._conn._doDisconnect();
             return;
         } else {
-            this.streamStart = "<stream:stream>";
             var string = this._streamWrap(message.data);
             var elem = new DOMParser().parseFromString(string, "text/xml").documentElement;
             this.socket.onmessage = this._onMessage.bind(this);
@@ -37550,7 +37549,7 @@ define("converse-dependencies", [
                 this.model.messages.off('add',null,this);
                 this.remove();
                 this.model.maximize();
-            }, 200)
+            }, 200, true)
         });
 
         this.MinimizedChats = Backbone.Overview.extend({
@@ -37687,10 +37686,16 @@ define("converse-dependencies", [
 
             showInRoster: function () {
                 var chatStatus = this.get('chat_status');
-                if (converse.show_only_online_users && chatStatus !== 'online')
+                if ((converse.show_only_online_users && chatStatus !== 'online')
+                    || (converse.hide_offline_users && chatStatus === 'offline')) {
+                    // If pending or requesting, show
+                    if ((this.get('ask') === 'subscribe')
+                        || (this.get('subscription') === 'from')
+                        || (this.get('requesting') === true)) {
+                        return true;
+                    }
                     return false;
-                if (converse.hide_offline_users && chatStatus === 'offline')
-                    return false;
+                }
                 return true;
             }
         });
