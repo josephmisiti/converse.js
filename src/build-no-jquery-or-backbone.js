@@ -10,7 +10,5 @@
         "jquery-private":           "src/jquery-private-external",
         "backbone":                 "src/backbone-external",
         "backbone-private":         "src/backbone-private-external",
-        // "underscore":               "src/underscore-external",
-        // "underscore-private":       "src/underscore-private-external",
     }
 })
